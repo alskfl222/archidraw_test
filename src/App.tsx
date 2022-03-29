@@ -19,7 +19,7 @@ const ProjectInfoWrapper = styled.div`
 
 const ProjectInfo = styled.span`
   position: absolute;
-  top: 1rem;
+  top: 1.5rem;
   left: calc(32px + 12px + 9px);
   color: rgb(102, 102, 102);
 
@@ -42,7 +42,17 @@ const TopTitle = styled.div`
 `;
 
 const ProjectFilter = styled.span`
-  display: flex;
+  position: absolute;
+  top: 1.5rem;
+  right: calc(32px + 12px + 9px);
+  color: rgb(102, 102, 102);
+
+  span {
+    margin-right: 1rem;
+  }
+  input {
+    margin-right: 0.5rem;
+  }
 `;
 
 const ProjectWrapper = styled.div`
@@ -76,23 +86,46 @@ const CardWrapper = styled.div<{ isChecked: boolean }>`
     position: absolute;
     top: 15px;
     left: 15px;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     z-index: 101;
-    background-color: #fff;
-    border: 1px solid black;
-    border-radius: 4px;
-    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.25s ease 0s;
+
+    &:hover {
+      box-shadow: inset rgb(67 87 110 / 8%) 1px 1px 8px 2px,
+        rgb(67 87 110 / 14%) 2px 4px 20px 2px;
+    }
   }
 
   input[type='checkbox']:checked + label {
+    background-color: #499fb6;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 2px;
+      width: 6px;
+      height: 2px;
+      background-color: #fff;
+      transform: rotate(41deg);
+    }
     &::after {
-      content: '✔';
-      padding: 0;
-      margin: 0;
+      content: '';
+      position: absolute;
+      top: 7px;
+      left: 5px;
+      width: 10px;
+      height: 2px;
+      background-color: #fff;
+      transform: rotate(-45deg);
     }
   }
 
@@ -107,7 +140,8 @@ const CardWrapper = styled.div<{ isChecked: boolean }>`
   &:hover {
     box-shadow: rgb(67 87 110 / 8%) 1px 1px 8px 2px,
       rgb(67 87 110 / 14%) 2px 4px 20px 2px;
-    div, label {
+    div,
+    label {
       visibility: visible;
     }
   }
@@ -137,7 +171,6 @@ const CardMaskInfo = styled.div`
   background: rgba(0, 0, 0, 0.35);
   border-radius: 4px;
 `;
-
 
 const App = () => {
   const [checked, setChecked] = useState<number[]>([]);
@@ -178,6 +211,7 @@ const App = () => {
           )}
         </ProjectInfo>
         <TopTitle>갤러리</TopTitle>
+        {checked.length > 0 && <ProjectFilter>asdf</ProjectFilter>}
       </ProjectInfoWrapper>
       <ProjectWrapper>
         {data.renderings.map((card, idx) => {
