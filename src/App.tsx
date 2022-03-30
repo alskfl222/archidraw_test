@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Checkbox, Dropdown, Menu } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
@@ -14,6 +14,10 @@ const GalleryContentWrapper = styled.div`
   .ant-checkbox-checked .ant-checkbox-inner {
     background-color: #499fb6;
     border-color: #499fb6;
+  }
+  .ant-checkbox-inner,
+  .ant-checkbox-input {
+    transform: scale(0.9);
   }
 `;
 
@@ -123,7 +127,7 @@ const CardMaskInfo = styled.div`
   width: 100%;
   height: 100%;
   z-index: 100;
-  padding: 15px;
+  padding: 10px 15px;
   display: flex;
   justify-content: space-between;
   border-radius: 4px;
@@ -135,6 +139,8 @@ const CardMaskInfo = styled.div`
     height: 1rem;
     color: #fff;
     visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) 0s;
+
     &.ant-checkbox-wrapper-checked {
       visibility: visible;
     }
@@ -146,14 +152,131 @@ const CardMaskInfo = styled.div`
     a {
       visibility: visible;
     }
+
+    a:active {
+      box-shadow: rgb(67 87 110 / 8%) 1px 1px 8px 2px,
+        rgb(67 87 110 / 14%) 2px 4px 20px 2px;
+    }
+  }
+`;
+
+const ModalBackdrop = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.65);
+  overflow-y: hidden;
+`;
+
+const ModalSection = styled.section`
+  position: absolute;
+  top: calc(50vh - 265px);
+  left: calc(50vw - 220px);
+  width: 440px;
+  height: 530px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 1rem;
+`;
+
+const ModalImgContainer = styled.div`
+  box-shadow: 0 0.5px #6db2c5;
+  img {
+    width: 440px;
+    border-radius: 1rem;
+  }
+`;
+
+const ModalMessageContainer = styled.div`
+  margin: 24px auto;
+  display: flex;
+  flex-direction: column;
+
+  h5 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: center;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    color: #2b2b2b;
+    user-select: none;
+  }
+  span {
+    line-height: 24px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    color: #8b8b8b;
+    text-transform: none;
+    user-select: none;
+  }
+`;
+
+const ModalBtnContainer = styled.div`
+  position: absolute;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+
+  button {
+    cursor: pointer;
+  }
+`;
+
+const ModalCardDeleteBtn = styled.button`
+  width: 392px;
+  height: 48px;
+  margin: 0 24px 14px 24px;
+  background: #6db2c5;
+  border-radius: 4px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.1px;
+  color: #fbfbfb;
+  line-height: 48px;
+  user-select: none;
+
+  &:hover {
+    background: #71b6c9;
+  }
+`;
+
+const ModalCloseBtn = styled.button`
+  width: 392px;
+  height: 48px;
+  margin: 0 24px 14px 24px;
+  background: #fff;
+  border-radius: 4px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.1px;
+  color: #6db2c5;
+  line-height: 48px;
+  user-select: none;
+
+  &:hover {
+    background-color: #fbfbfb;
   }
 `;
 
 const checkedAllArr = data.renderings.map((render, idx) => idx);
 
 const App = () => {
+  const [renderings, setRenderings] = useState<{ _id: string }[]>(
+    data.renderings
+  );
+  const [selected, setSelected] = useState<number>(0);
   const [checked, setChecked] = useState<CheckboxValueType[]>([]);
   const [checkAll, setCheckAll] = useState<boolean>(false);
+  const [isOpenedModal, setIsOpenedModal] = useState<boolean>(false);
   const onChange = (values: CheckboxValueType[]) => {
     setChecked((checked) => values);
   };
@@ -166,13 +289,72 @@ const App = () => {
       setChecked((checked) => []);
       setCheckAll((state) => false);
     }
-    console.log("CheckALL")
   };
 
-  const menu = (
+  const handleCardDropdownDownloadBtn = (idx: number) => {
+    console.log(idx);
+  };
+
+  const handleCardDropdownDeleteBtn = (idx: number) => {
+    setSelected((value) => idx);
+    setIsOpenedModal((state) => true);
+  };
+
+  const handleModalDeleteBtn = (idx: number) => {
+    setRenderings((renderings) => [
+      ...renderings.slice(0, idx),
+      ...renderings.slice(idx + 1),
+    ]);
+    setIsOpenedModal((state) => false);
+  };
+
+  const handleModalCloseBtn = () => {
+    setIsOpenedModal((state) => false);
+  };
+
+  useEffect(() => {
+    if (isOpenedModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    // eslint-disable-next-line
+  }, [isOpenedModal]);
+
+  const DropDownMenu = (idx: number) => (
     <Menu>
-      <Menu.Item key='0'>메뉴1</Menu.Item>
+      <Menu.Item key='0' onClick={() => handleCardDropdownDownloadBtn(idx)}>
+        다운로드
+      </Menu.Item>
+      <Menu.Item key='1' onClick={() => handleCardDropdownDeleteBtn(idx)}>
+        삭제
+      </Menu.Item>
     </Menu>
+  );
+
+  const Modal = (idx: number) => (
+    <ModalBackdrop>
+      <ModalSection>
+        <ModalImgContainer>
+          <img
+            src='https://resources.archisketch.com/editor/assets_test/img/pop-up/gallery_delete@2x.gif'
+            alt='gallery_delete'
+          ></img>
+        </ModalImgContainer>
+        <ModalMessageContainer>
+          <br />
+          <h5>확인</h5>
+          <span>
+            <br />
+            정말 이 이미지를 삭제하시겠습니까?
+          </span>
+        </ModalMessageContainer>
+        <ModalBtnContainer>
+          <ModalCardDeleteBtn onClick={() => handleModalDeleteBtn(idx)}>삭제</ModalCardDeleteBtn>
+          <ModalCloseBtn onClick={handleModalCloseBtn}>돌아가기</ModalCloseBtn>
+        </ModalBtnContainer>
+      </ModalSection>
+    </ModalBackdrop>
   );
 
   return (
@@ -188,7 +370,7 @@ const App = () => {
               </span>
             </>
           ) : (
-            `${data.renderings.length} 개의 렌더샷`
+            `${renderings.length} 개의 렌더샷`
           )}
         </ProjectInfo>
         <TopTitle>갤러리</TopTitle>
@@ -200,14 +382,22 @@ const App = () => {
       </ProjectInfoWrapper>
       <ProjectWrapper>
         <ProjectCardsWrapper onChange={onChange} value={checked}>
-          {data.renderings.map((card, idx) => {
+          {renderings.map((card, idx) => {
             return (
               <ProjectCard key={idx}>
                 <CardWrapper>
                   <CardImg src={card._id} alt='render' />
                   <CardMaskInfo>
-                    <Checkbox checked={checked.includes(idx)} value={idx} />
-                    <Dropdown overlay={menu} trigger={['click']}>
+                    <Checkbox
+                      checked={checked.includes(idx)}
+                      value={idx}
+                      // style={{ width: '80%', height: '80%' }}
+                    />
+                    <Dropdown
+                      overlay={DropDownMenu(idx)}
+                      trigger={['click']}
+                      placement='bottomRight'
+                    >
                       <a
                         className='ant-dropdown-link'
                         onClick={(e) => e.preventDefault()}
@@ -222,6 +412,7 @@ const App = () => {
           })}
         </ProjectCardsWrapper>
       </ProjectWrapper>
+      {isOpenedModal && Modal(selected)}
     </GalleryContentWrapper>
   );
 };
