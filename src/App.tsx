@@ -161,7 +161,7 @@ const CardMaskInfo = styled.div`
 `;
 
 const ModalBackdrop = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -172,7 +172,7 @@ const ModalBackdrop = styled.div`
 `;
 
 const ModalSection = styled.section`
-  position: absolute;
+  position: fixed;
   top: calc(50vh - 265px);
   left: calc(50vw - 220px);
   width: 440px;
@@ -311,15 +311,6 @@ const App = () => {
   const handleModalCloseBtn = () => {
     setIsOpenedModal((state) => false);
   };
-
-  useEffect(() => {
-    if (isOpenedModal) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    // eslint-disable-next-line
-  }, [isOpenedModal]);
 
   const DropDownMenu = (idx: number) => (
     <Menu>
