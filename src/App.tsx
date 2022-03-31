@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Checkbox } from 'antd';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import 'antd/dist/antd.css';
+import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 import data from './data/test.json';
 import Modal from './components/Modal';
@@ -48,7 +49,11 @@ const App = () => {
   };
 
   const handleCardDropdownDownloadBtn = (idx: number) => {
-    console.log(idx);
+    const filename =
+      renderings[idx]._id.split('/')[renderings[idx]._id.split('/').length - 1];
+    axios({ url: renderings[idx]._id, method: 'GET', responseType: 'blob' })
+      .then((res) => saveAs(res.data, filename))
+      .catch((err) => console.error(err));
   };
 
   const handleCardDropdownDeleteBtn = (idx: number) => {
