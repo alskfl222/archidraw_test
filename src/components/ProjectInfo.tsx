@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { Button, Checkbox, Select } from 'antd';
 import {
@@ -88,9 +88,11 @@ const ProjectInfo = (props: {
   renderings: { _id: string }[];
   checked: CheckboxValueType[];
   checkAll: boolean;
+  deselect: () => void;  
   handleCheckAll: () => void;
+  handleInfoDeleteBtn: (checked: CheckboxValueType[]) => void;
 }) => {
-  const { renderings, checked, checkAll, handleCheckAll } = props;
+  const { renderings, checked, checkAll, deselect, handleCheckAll, handleInfoDeleteBtn } = props;
   const [renderingOption, setRenderingOption] = useState<string>(
     renderingOptions[0]
   );
@@ -135,6 +137,10 @@ const ProjectInfo = (props: {
         .catch((err) => console.error(err));
     }
   };
+  const handleDeleteBtn = () => {
+    handleInfoDeleteBtn(checked)
+  }
+
 
   return (
     <ProjectInfoWrapper>
@@ -155,8 +161,8 @@ const ProjectInfo = (props: {
       {checked.length > 0 ? (
         <ProjectController>
           <Button icon={<DownloadOutlined />} onClick={handleDownloadBtn} />
-          <Button icon={<DeleteOutlined />} />
-          <Button>Deselect</Button>
+          <Button icon={<DeleteOutlined />} onClick={handleDeleteBtn}/>
+          <Button onClick={deselect}>Deselect</Button>
         </ProjectController>
       ) : (
         <ProjectController>

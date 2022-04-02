@@ -1,3 +1,4 @@
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import styled from 'styled-components';
 
 const ModalBackdrop = styled.div`
@@ -108,11 +109,13 @@ const ModalCloseBtn = styled.button`
 `;
 
 const Modal = (props: {
+  type: string;
   idx: number;
-  deleteFn: (idx: number) => void;
+  checked: CheckboxValueType[];
+  deleteFn: (value: CheckboxValueType[]) => void;
   closeFn: () => void;
 }) => {
-  const { idx, deleteFn, closeFn } = props;
+  const { type, idx, checked, deleteFn, closeFn } = props;
   return (
     <ModalBackdrop>
       <ModalSection>
@@ -124,17 +127,33 @@ const Modal = (props: {
         </ModalImgContainer>
         <ModalMessageContainer>
           <br />
-          <h5>확인</h5>
+          <h5>
+            {type === 'image'
+              ? 'Confirm To Delete'
+              : checked.length === 1
+              ? `${checked.length} image was selected`
+              : `${checked.length} images were selected`}
+          </h5>
           <span>
             <br />
-            정말 이 이미지를 삭제하시겠습니까?
+            {type === 'image' || checked.length === 1
+              ? 'Are you sure you want to delete this image?'
+              : 'Are you sure you want to delete these images?'}
           </span>
         </ModalMessageContainer>
         <ModalBtnContainer>
-          <ModalCardDeleteBtn onClick={() => deleteFn(idx)}>
-            삭제
+          <ModalCardDeleteBtn
+            onClick={() => {
+              if (type === 'image') {
+                deleteFn([idx]);
+              } else {
+                deleteFn(checked);
+              }
+            }}
+          >
+            DELETE
           </ModalCardDeleteBtn>
-          <ModalCloseBtn onClick={closeFn}>돌아가기</ModalCloseBtn>
+          <ModalCloseBtn onClick={closeFn}>RETURN</ModalCloseBtn>
         </ModalBtnContainer>
       </ModalSection>
     </ModalBackdrop>

@@ -34,8 +34,20 @@ const App = () => {
   const [checked, setChecked] = useState<CheckboxValueType[]>([]);
   const [checkAll, setCheckAll] = useState<boolean>(false);
   const [isOpenedModal, setIsOpenedModal] = useState<boolean>(false);
+  const [modalType, setModalType] = useState<string>('image');
+
   const onChange = (values: CheckboxValueType[]) => {
     setChecked((checked) => values);
+  };
+
+  const deselect = () => {
+    setChecked((checked) => []);
+    setCheckAll((state) => false);
+  };
+
+  const handleInfoDeleteBtn = (checked: CheckboxValueType[]) => {
+    setModalType(type => 'deleteBtn')
+    setIsOpenedModal(state => true)
   };
 
   const handleCheckAll = () => {
@@ -58,14 +70,14 @@ const App = () => {
 
   const handleCardDropdownDeleteBtn = (idx: number) => {
     setSelected((value) => idx);
+    setModalType(type => 'image')
     setIsOpenedModal((state) => true);
   };
 
-  const handleModalDeleteBtn = (idx: number) => {
-    setRenderings((renderings) => [
-      ...renderings.slice(0, idx),
-      ...renderings.slice(idx + 1),
-    ]);
+  const handleDelete = (value: CheckboxValueType[]) => {
+    const remain = renderings.filter((render, idx) => !value.includes(idx));
+    setChecked((checked) => []);
+    setRenderings((renderings) => remain);
     setIsOpenedModal((state) => false);
   };
 
@@ -78,8 +90,10 @@ const App = () => {
       <ProjectInfo
         renderings={renderings}
         checked={checked}
+        deselect={deselect}
         checkAll={checkAll}
         handleCheckAll={handleCheckAll}
+        handleInfoDeleteBtn={handleInfoDeleteBtn}
       />
       <ProjectCards
         renderings={renderings}
@@ -90,8 +104,10 @@ const App = () => {
       />
       {isOpenedModal && (
         <Modal
+          type={modalType}
           idx={selected}
-          deleteFn={() => handleModalDeleteBtn(selected)}
+          checked={checked}
+          deleteFn={handleDelete}
           closeFn={handleModalCloseBtn}
         />
       )}
