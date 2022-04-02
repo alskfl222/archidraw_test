@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import 'antd/dist/antd.css';
@@ -76,7 +76,7 @@ const App = () => {
   return (
     <GalleryContentWrapper>
       <ProjectInfo
-        totalLength={renderings.length}
+        renderings={renderings}
         checked={checked}
         checkAll={checkAll}
         handleCheckAll={handleCheckAll}
