@@ -90,9 +90,9 @@ const ProjectInfo = (props: {
   checkAll: boolean;
   deselect: () => void;  
   handleCheckAll: () => void;
-  handleInfoDeleteBtn: (checked: CheckboxValueType[]) => void;
+  deleteFn: (checked: CheckboxValueType[]) => void;
 }) => {
-  const { renderings, checked, checkAll, deselect, handleCheckAll, handleInfoDeleteBtn } = props;
+  const { renderings, checked, checkAll, deselect, handleCheckAll, deleteFn } = props;
   const [renderingOption, setRenderingOption] = useState<string>(
     renderingOptions[0]
   );
@@ -138,7 +138,7 @@ const ProjectInfo = (props: {
     }
   };
   const handleDeleteBtn = () => {
-    handleInfoDeleteBtn(checked)
+    deleteFn(checked)
   }
 
 

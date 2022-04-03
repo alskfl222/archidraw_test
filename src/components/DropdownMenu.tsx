@@ -24,7 +24,13 @@ const DropdownMenu = (props: {
       trigger={['click']}
       placement='bottomRight'
     >
-      <a className='ant-dropdown-link' onClick={(e) => e.preventDefault()}>
+      <a
+        className='ant-dropdown-link'
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
         <EllipsisOutlined />
       </a>
     </Dropdown>

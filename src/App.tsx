@@ -118,7 +118,7 @@ const App = () => {
         deselect={deselect}
         checkAll={checkAll}
         handleCheckAll={handleCheckAll}
-        handleInfoDeleteBtn={handleInfoDeleteBtn}
+        deleteFn={handleInfoDeleteBtn}
       />
       <ProjectCards
         renderings={renderings}
