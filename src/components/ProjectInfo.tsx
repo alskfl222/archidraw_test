@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Button, Checkbox, Select } from 'antd';
 import {
@@ -51,7 +51,7 @@ const ProjectController = styled.span`
   flex: 1 1 0%;
   display: flex;
   justify-content: flex-end;
-  text-align: right;
+  text-align: left;
   gap: 0.5rem;
   color: rgb(102, 102, 102);
 `;

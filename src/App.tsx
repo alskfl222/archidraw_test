@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import 'antd/dist/antd.css';
@@ -9,6 +9,7 @@ import data from './data/test.json';
 import Modal from './components/Modal';
 import ProjectCards from './components/ProjectCards';
 import ProjectInfo from './components/ProjectInfo';
+import CardViewer from './components/CardViewer';
 
 const GalleryContentWrapper = styled.div`
   margin-top: 1rem;
@@ -24,8 +25,6 @@ const GalleryContentWrapper = styled.div`
   }
 `;
 
-const checkedAllArr = data.renderings.map((render, idx) => idx);
-
 const App = () => {
   const [renderings, setRenderings] = useState<{ _id: string }[]>(
     data.renderings
@@ -34,7 +33,10 @@ const App = () => {
   const [checked, setChecked] = useState<CheckboxValueType[]>([]);
   const [checkAll, setCheckAll] = useState<boolean>(false);
   const [isOpenedModal, setIsOpenedModal] = useState<boolean>(false);
+  const [isOpenedViewer, setIsOpenedViewer] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>('image');
+
+  const checkedAllArr = renderings.map((render, idx) => idx);
 
   const onChange = (values: CheckboxValueType[]) => {
     setChecked((checked) => values);
@@ -46,8 +48,8 @@ const App = () => {
   };
 
   const handleInfoDeleteBtn = (checked: CheckboxValueType[]) => {
-    setModalType(type => 'deleteBtn')
-    setIsOpenedModal(state => true)
+    setModalType((type) => 'deleteBtn');
+    setIsOpenedModal((state) => true);
   };
 
   const handleCheckAll = () => {
@@ -60,7 +62,7 @@ const App = () => {
     }
   };
 
-  const handleCardDropdownDownloadBtn = (idx: number) => {
+  const handleCardDownloadBtn = (idx: number) => {
     const filename =
       renderings[idx]._id.split('/')[renderings[idx]._id.split('/').length - 1];
     axios({ url: renderings[idx]._id, method: 'GET', responseType: 'blob' })
@@ -68,9 +70,9 @@ const App = () => {
       .catch((err) => console.error(err));
   };
 
-  const handleCardDropdownDeleteBtn = (idx: number) => {
+  const handleCardDeleteBtn = (idx: number) => {
     setSelected((value) => idx);
-    setModalType(type => 'image')
+    setModalType((type) => 'image');
     setIsOpenedModal((state) => true);
   };
 
@@ -84,6 +86,29 @@ const App = () => {
   const handleModalCloseBtn = () => {
     setIsOpenedModal((state) => false);
   };
+  const handleViewerOpen = (idx: number) => {
+    setSelected((value) => idx);
+    setIsOpenedViewer((state) => true);
+  };
+  const handleViewerCloseBtn = () => {
+    setIsOpenedViewer((state) => false);
+  };
+
+  useEffect(() => {
+    if (checked.length === renderings.length) {
+      setCheckAll((state) => true);
+    } else {
+      setCheckAll((state) => false);
+    }
+    // eslint-disable-next-line
+  }, [checked]);
+  useEffect(() => {
+    if (isOpenedViewer) {
+      document.body.style.overflowY = 'hidden';
+    } else {
+      document.body.style.overflowY = 'unset';
+    }
+  }, [isOpenedViewer]);
 
   return (
     <GalleryContentWrapper>
@@ -99,8 +124,9 @@ const App = () => {
         renderings={renderings}
         checked={checked}
         onChange={onChange}
-        downloadFn={handleCardDropdownDownloadBtn}
-        deleteFn={handleCardDropdownDeleteBtn}
+        openViewer={handleViewerOpen}
+        downloadFn={handleCardDownloadBtn}
+        deleteFn={handleCardDeleteBtn}
       />
       {isOpenedModal && (
         <Modal
@@ -109,6 +135,16 @@ const App = () => {
           checked={checked}
           deleteFn={handleDelete}
           closeFn={handleModalCloseBtn}
+        />
+      )}
+      {isOpenedViewer && (
+        <CardViewer
+          renderings={renderings}
+          selected={selected}
+          setSelected={setSelected}
+          downloadFn={handleCardDownloadBtn}
+          deleteFn={handleCardDeleteBtn}
+          closeFn={handleViewerCloseBtn}
         />
       )}
     </GalleryContentWrapper>

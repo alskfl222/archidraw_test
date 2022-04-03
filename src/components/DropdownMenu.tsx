@@ -10,10 +10,10 @@ const DropdownMenu = (props: {
   const DropdownOptions = (idx: number) => (
     <Menu>
       <Menu.Item key='0' onClick={() => downloadFn(idx)}>
-        다운로드
+        Download
       </Menu.Item>
       <Menu.Item key='1' onClick={() => deleteFn(idx)}>
-        삭제
+        Delete
       </Menu.Item>
     </Menu>
   );

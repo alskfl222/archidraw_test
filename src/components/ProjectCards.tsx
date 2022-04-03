@@ -92,10 +92,11 @@ const ProjectCards = (props: {
   renderings: { _id: string }[]
   checked: CheckboxValueType[];
   onChange: (values: CheckboxValueType[]) => void;
+  openViewer: (idx: number) => void;
   downloadFn: (idx: number) => void;
   deleteFn: (idx: number) => void;
 }) => {
-  const { renderings, checked, onChange, downloadFn, deleteFn } = props;
+  const { renderings, checked, onChange, openViewer, downloadFn, deleteFn } = props;
 
   return (
     <ProjectWrapper>
@@ -105,7 +106,7 @@ const ProjectCards = (props: {
             <ProjectCard key={idx}>
               <CardWrapper>
                 <CardImg src={card._id} alt='render' />
-                <CardMaskInfo>
+                <CardMaskInfo onClick={() => openViewer(idx)}>
                   <Checkbox
                     checked={checked.includes(idx)}
                     value={idx}
